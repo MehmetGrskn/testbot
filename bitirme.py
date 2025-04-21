@@ -13,7 +13,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 
 # Siteye git
-driver.get("https://gisis.imo.org/Public/MCIR/Search.aspx")
+driver.get("url")
 
 wait = WebDriverWait(driver, 200)
 
