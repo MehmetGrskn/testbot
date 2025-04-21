@@ -6,26 +6,26 @@ import folium
 from folium.plugins import MarkerCluster
 import os
 
-# Klasör adı
+# Folder name
 output_folder = 'Bitirme/grafikler'
 
-# Klasörün var olup olmadığını kontrol et, yoksa oluştur
+# Check if the folder exists, otherwise create it
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-# Excel dosyasını yükleyelim
+# Let's load the Excel file
 df = pd.read_excel('datalar\\temizlenmiş-datalar.xlsx')
 
-# Grafik ayarları
+# Graphics settings
 sns.set(style="whitegrid")
 plt.figure(figsize=(12, 8))
 
 
-# 'Flag Administrations' sütunundaki ülkelere göre kaç olay olduğuna bakalım
+# Let's see how many incidents there are by country in the 'Flag Administrations' column
 country_counts = df['Flag Administrations'].value_counts().reset_index()
 country_counts.columns = ['Country', 'Count']
 
-# Harita çizimi
+# Map drawing
 fig = px.choropleth(
     country_counts,
     locations='Country',
@@ -35,7 +35,7 @@ fig = px.choropleth(
     title='Casualties by Flag Administration (Country)'
 )
 
-# HTML olarak kaydet
+# Save as a HTML
 fig.write_html(os.path.join(output_folder, 'casualties_by_flag_administration.html'))
 print(f"Harita kaydedildi: {os.path.join(output_folder, 'casualties_by_flag_administration.html')}")
 
@@ -43,7 +43,7 @@ print(f"Harita kaydedildi: {os.path.join(output_folder, 'casualties_by_flag_admi
 # 6. Casualty Event - Donut chart
 casualty_event_count = df['Casualty event'].value_counts()
 
-# Küçük değerleri grupla (isteğe bağlı)
+# Group small values ​​(optional)
 threshold = 0.03  # %3 altındaki değerler "Other" olacak
 total = casualty_event_count.sum()
 filtered_counts = casualty_event_count[casualty_event_count / total >= threshold]
@@ -113,14 +113,14 @@ map_center = [df['Coordinates'].mean(), df['Coordinates'].mean()]  # Ortalama ko
 map = folium.Map(location=map_center, zoom_start=6)
 marker_cluster = MarkerCluster().add_to(map)
 
-# Koordinatlar için map işaretçileri ekleyelim (bu kısım verinize göre uyarlanabilir)
+# Let's add map markers for coordinates (this part can be customized according to the data)
 for idx, row in df.iterrows():
     coordinates = row['Coordinates']
     if pd.notnull(coordinates):
         lat, lon = map(float, coordinates.split(','))
         folium.Marker([lat, lon]).add_to(marker_cluster)
 
-# Haritayı kaydetme
+# Save the map
 map.save(os.path.join(output_folder, 'casualties_map.html'))
 
 # 9. Number of Investigation Reports - Bar plot
